@@ -2,6 +2,7 @@ import pygame
 from pygame.sprite import Group
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 import game_functions as gf
 
@@ -16,6 +17,9 @@ def run_game():
     # 实参（ai_settings.screen_width，ai_settings.screen_height）是一个元组
     # ，指定游戏窗口的尺寸。
     pygame.display.set_caption("Alien Invasion")
+
+    # 创建一个用于存储游戏统计信息的实例
+    stats = GameStats(ai_settings)
 
     # 创建一艘飞船
     ship = Ship(ai_settings, screen)
@@ -40,10 +44,11 @@ def run_game():
         ship.update()  # 飞船的位置将在检测到键盘事件后（但在更新屏幕前）更新。
         # 这样，玩家输入时，飞船的位置将更新，从而确保使用更新后的位置将飞船绘制到屏幕上。
         # 所有未消失的子弹的位置
-        gf.update_bullets(bullets)
+        gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+        gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
         # 我们使用更新后的位置来绘制新屏幕
-        gf.update_screen(ai_settings, screen, ship, aliens, bullets)  # 修改对
-        # update_screen()的调用,让它能够访问外星人编组.
+        gf.update_screen(ai_settings, screen, ship, aliens, bullets)
+        # 修改对update_screen()的调用,让它能够访问外星人编组.
 
 
 # 最后一行调用run_game()，这将初始化游戏并开始主循环

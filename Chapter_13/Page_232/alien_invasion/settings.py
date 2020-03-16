@@ -16,11 +16,19 @@ class Settings():
 
         # 飞船的设置
         self.ship_speed_factor = 1.5
+        self.ship_limit = 3
 
         # 子弹设置
-        self.bullet_speed_factor = 1
+        self.bullet_speed_factor = 3
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
         self.bullets_allowed = 3  # 这将未消失的子弹数限制为3颗
 
+        # 外星人设置
+        self.alien_speed_factor = 1
+        self.fleet_drop_speed = 10
+        # fleet_direction为1表示向右移,为-1表示向左移
+        self.fleet_direction = 1  # 我们使用值1和-1来表示它们,并在外星人群改变方向时在这
+        # 两个值之间切换.另外,鉴于向右移动时需要增大每个外星人的x坐标,而向左移动时需要减小每个
+        # 外星人的x坐标,使用数字来表示方向更合理.
