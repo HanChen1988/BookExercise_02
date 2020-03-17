@@ -39,16 +39,22 @@ def run_game():
     # 开始游戏的主循环
     while True:
         # 主循环检查玩家的输入
-        gf.check_events(ai_settings, screen, ship, bullets)
-        # 更新飞船的位置
-        ship.update()  # 飞船的位置将在检测到键盘事件后（但在更新屏幕前）更新。
-        # 这样，玩家输入时，飞船的位置将更新，从而确保使用更新后的位置将飞船绘制到屏幕上。
-        # 所有未消失的子弹的位置
-        gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
-        gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
+        gf.check_events(ai_settings, screen, ship, bullets)  # 在主循环中,在任何
+        # 情况下都需要调用check_events(),即便游戏处于非活动状态亦如此.例如,我们需要知道玩家
+        # 是否按了Q键以退出游戏,或者单击关闭窗口的按钮.
+
+        if stats.game_active:
+            # 更新飞船的位置
+            ship.update()  # 飞船的位置将在检测到键盘事件后（但在更新屏幕前）更新。
+            # 这样，玩家输入时，飞船的位置将更新，从而确保使用更新后的位置将飞船绘制到屏幕上。
+            # 所有未消失的子弹的位置
+            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+            gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
+
         # 我们使用更新后的位置来绘制新屏幕
         gf.update_screen(ai_settings, screen, ship, aliens, bullets)
         # 修改对update_screen()的调用,让它能够访问外星人编组.
+        # 我们还需要不断更新屏幕,以便在等待玩家是否选择开始新游戏时能够修改屏幕.
 
 
 # 最后一行调用run_game()，这将初始化游戏并开始主循环
