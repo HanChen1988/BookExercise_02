@@ -41,7 +41,8 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def check_events(ai_settings, screen, ship, bullets):
+def check_events(ai_settings, screen, stats, play_button, ship, aliens
+                 , bullets):
     """响应按键和鼠标事件"""
     for event in pygame.event.get():  # pygame检测到的事件
         if event.type == pygame.QUIT:
@@ -52,9 +53,42 @@ def check_events(ai_settings, screen, ship, bullets):
         elif event.type == pygame.KEYUP:   # 玩家松开右箭头键(K_RIGHT)时
             # ,我们将moving_right设置为False
             check_keyup_events(event, ship)
+        elif event.type == pygame.MOUSEBUTTONDOWN:  # 无论玩家单击屏幕的什么地方,
+            # Pygame都将检测到一个MOUSEBUTTONDOWN事件,但是我们只想让这个游戏在玩家用鼠标
+            # 单击Play按钮时作出响应.
+            mouse_x, mouse_y = pygame.mouse.get_pos()  # 我们使用了
+            # pygame.mouse.get_pos(),它返回一个元组,其中包含玩家单击时鼠标的x和y坐标.
+            check_play_button(ai_settings, screen, stats, play_button, ship
+                              , aliens, bullets, mouse_x, mouse_y)
 
 
-def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button):
+def check_play_button(ai_settings, screen, stats, play_button, ship, aliens
+                      , bullets, mouse_x, mouse_y):
+    """在玩家单击Play按钮时开始新游戏"""
+    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active:  # 检测鼠标单击位置是否在Play按钮的
+        # rect内,仅当玩家单击了Play按钮且游戏当前处于非活动状态时,游戏才重新开始.
+        # 重置游戏设置
+        ai_settings.initialize_dynamic_settings()
+
+        # 隐藏光标
+        pygame.mouse.set_visible(False)  # 通过向set_visible()传递False,让Pygame在
+        # 光标位于游戏窗口内时将其隐藏起来.
+        # 重置游戏统计信息
+        stats.reset_stats()  # 重置了游戏统计信息,给玩家提供了三艘新飞船
+        stats.game_active = True  # 这个函数的代码执行完毕后,游戏就会开始.
+
+        # 清空外星人列表和子弹列表
+        aliens.empty()
+        bullets.empty()
+
+        # 创建一群新的外星人,并将飞船居中
+        create_fleet(ai_settings, screen, ship, aliens)
+        ship.center_ship()
+
+
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets,
+                  play_button):
     """更新屏幕上的图像，并切换到新屏幕"""
     # 每次循环时都重绘屏幕
     screen.fill(ai_settings.bg_color)  # 用背景色填充屏幕；这种方法只接受一个实参；
@@ -70,6 +104,9 @@ def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button
     aliens.draw(screen)  # 对编组调用draw()时,Pygame自动绘制编组的每个元素,绘制位置由
     # 元素的属性rect决定.在这里,aliens.draw(screen)在屏幕上绘制编组中的每个外星人.
 
+    # 显示得分
+    sb.show_score()
+
     # 如果游戏处于非活动状态,就绘制Play按钮
     if not stats.game_active:
         play_button.draw_button()
@@ -78,7 +115,7 @@ def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button
     pygame.display.flip()   # 命令Pygame让最近绘制的屏幕可见,将不断更新屏幕
 
 
-def update_bullets(ai_settings, screen, ship, aliens, bullets):
+def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
     """更新子弹的位置,并删除已消失的子弹"""
     # 更新子弹的位置
     bullets.update()  # 当你对编组调用update()时,编组将自动对其中的每个精灵调用
@@ -94,10 +131,12 @@ def update_bullets(ai_settings, screen, ship, aliens, bullets):
     # print(len(bullets))  # 我们使用了一条print语句,以显示当前还有多少颗子弹,从而核实已
     # 消失的子弹确实删除了
 
-    check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets)
+    check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
+                                  bullets)
 
 
-def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
+def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
+                                  bullets):
     """响应子弹和外星人的碰撞"""
     # 检查是否有子弹击中了外星人
     # 如果是这样,就删除相应的子弹和外星人
@@ -106,10 +145,18 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
     # 人的rect重叠时,groupcollide()就在它返回的字典中添加一个键-值对.两个实参True告诉
     # Pygame删除发生碰撞的子弹和外星人.
 
+    if collisions:  # 有子弹撞到外星人时,Pygame返回一个字典(collisions).我们检查这个字典
+        # 是否存在,如果存在,我们就遍历其中的所有值.别忘了,每个值都是一个列表,包含被同一颗子弹
+        # 击中的所有外星人.
+        for aliens in collisions.values():
+            stats.score += ai_settings.alien_points * len(aliens)
+            sb.prep_score()  # 调用prep_score()来创建一幅显示最新得分的新图像.
+
     if len(aliens) == 0:
-        # 删除现有的子弹并新建一群外星人
+        # 删除现有的子弹、加快游戏节奏,并创建一群新的外星人
         bullets.empty()  # 编组aliens为空,就使用方法empty()删除编组中余下的所有精灵,
         # 从而删除现有的所有子弹.
+        ai_settings.increase_speed()
         create_fleet(ai_settings, screen, ship, aliens)
 
 
@@ -190,6 +237,8 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         sleep(0.5)
     else:
         stats.game_active = False
+        pygame.mouse.set_visible(True)  # 在ship_hit()中,我们在游戏进入非活动状态后,
+        # 立即让光标可见.
 
 
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
