@@ -135,6 +135,13 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
                                   bullets)
 
 
+def check_high_score(stats, sb):
+    """检查是否诞生了新的最高得分"""
+    if stats.score > stats.high_score:  # 使用stats来比较当前得分和最高得分
+        stats.high_score = stats.score
+        sb.prep_high_score()  # 在必要时使用sb来修改最高得分图像.
+
+
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
                                   bullets):
     """响应子弹和外星人的碰撞"""
@@ -151,6 +158,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
         for aliens in collisions.values():
             stats.score += ai_settings.alien_points * len(aliens)
             sb.prep_score()  # 调用prep_score()来创建一幅显示最新得分的新图像.
+        check_high_score(stats, sb)
 
     if len(aliens) == 0:
         # 删除现有的子弹、加快游戏节奏,并创建一群新的外星人
