@@ -27,7 +27,7 @@ class Button():
     def prep_msg(self, msg):
         """将msg渲染为图像,并使其在按钮上居中"""
         self.msg_image = self.font.render(msg, True, self.text_color
-                                          , self.buttom_color)  # 调用
+                                          , self.button_color)  # 调用
         # font.render()将存储在msg中的文本转换为图像,然后将该图像存储在msg_image中.
         # 接受一个布尔实参,该实参指定开启还是关闭反锯齿功能(反锯齿让文本的边缘更平滑).
         # 余下的两个实参分别是文本颜色和背景色.

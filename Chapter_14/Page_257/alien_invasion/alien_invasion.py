@@ -3,6 +3,7 @@ from pygame.sprite import Group
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 import game_functions as gf
@@ -22,8 +23,9 @@ def run_game():
     # 创建Play按钮
     play_button = Button(ai_settings, screen, "Play")
 
-    # 创建一个用于存储游戏统计信息的实例
+    # 创建存储游戏统计信息的实例,并创建记分牌
     stats = GameStats(ai_settings)
+    sb = Scoreboard(ai_settings, screen, stats)
 
     # 创建一艘飞船
     ship = Ship(ai_settings, screen)
@@ -43,20 +45,22 @@ def run_game():
     # 开始游戏的主循环
     while True:
         # 主循环检查玩家的输入
-        gf.check_events(ai_settings, screen, ship, bullets)  # 在主循环中,在任何
-        # 情况下都需要调用check_events(),即便游戏处于非活动状态亦如此.例如,我们需要知道玩家
-        # 是否按了Q键以退出游戏,或者单击关闭窗口的按钮.
+        gf.check_events(ai_settings, screen, stats, play_button, ship, aliens
+                        , bullets)
+        # 在主循环中,在任何情况下都需要调用check_events(),即便游戏处于非活动状态亦如此.
+        # 例如,我们需要知道玩家是否按了Q键以退出游戏,或者单击关闭窗口的按钮.
 
         if stats.game_active:
             # 更新飞船的位置
             ship.update()  # 飞船的位置将在检测到键盘事件后（但在更新屏幕前）更新。
             # 这样，玩家输入时，飞船的位置将更新，从而确保使用更新后的位置将飞船绘制到屏幕上。
             # 所有未消失的子弹的位置
-            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens,
+                              bullets)
             gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
 
         # 我们使用更新后的位置来绘制新屏幕
-        gf.update_screen(ai_settings, screen, stats, ship, aliens, bullets
+        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets
                          , play_button)
         # 修改对update_screen()的调用,让它能够访问外星人编组.
         # 我们还需要不断更新屏幕,以便在等待玩家是否选择开始新游戏时能够修改屏幕.
