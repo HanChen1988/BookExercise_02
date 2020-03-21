@@ -45,8 +45,8 @@ def run_game():
     # 开始游戏的主循环
     while True:
         # 主循环检查玩家的输入
-        gf.check_events(ai_settings, screen, stats, play_button, ship, aliens
-                        , bullets)
+        gf.check_events(ai_settings, screen, stats, sb, play_button, ship,
+                        aliens, bullets)
         # 在主循环中,在任何情况下都需要调用check_events(),即便游戏处于非活动状态亦如此.
         # 例如,我们需要知道玩家是否按了Q键以退出游戏,或者单击关闭窗口的按钮.
 
@@ -57,7 +57,8 @@ def run_game():
             # 所有未消失的子弹的位置
             gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens,
                               bullets)
-            gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
+            gf.update_aliens(ai_settings, stats, sb, screen, ship, aliens,
+                             bullets)
 
         # 我们使用更新后的位置来绘制新屏幕
         gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets
