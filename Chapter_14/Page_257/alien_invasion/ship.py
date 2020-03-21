@@ -1,10 +1,12 @@
 import pygame
+from pygame.sprite import Sprite
 
 
-class Ship():
+class Ship(Sprite):
 
     def __init__(self, ai_settings, screen):
         """初始化飞船并设置其初始化位置"""
+        super().__init__()
         self.screen = screen
         self.ai_settings = ai_settings  # 我们在__init__()的形参列表中添加了
         # ai_settings,让飞船能够获取其速度设置。我们将形参ai_settings的值存储在一个属性中,
