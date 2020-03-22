@@ -11,17 +11,17 @@ y_values = [x**2 for x in x_values]  # 一个生成y值的列表解析,它遍历
 
 # 散点图
 # 1.使用自定义颜色-颜色名称
-# plt.scatter(x_values, y_values, c='red', edgecolors='none', s=40)  # 要删除数据点
-# 的轮廓,可在调用scatter()时传递实参edgecolors='none'.传递实参c将其设置为要使用的颜色的名称
+# plt.scatter(x_values, y_values, c='red', edgecolor='none', s=40)  # 要删除数据点
+# 的轮廓,可在调用scatter()时传递实参edgecolor='none'.传递实参c将其设置为要使用的颜色的名称
 
 # 2.使用自定义颜色-RGB
-# plt.scatter(x_values, y_values, c=(0, 0, 0.8), edgecolors='none', s=40)  # 可以
+# plt.scatter(x_values, y_values, c=(0, 0, 0.8), edgecolor='none', s=40)  # 可以
 # 使用RGB颜色模式自定义颜色.要指定自定义颜色,可传递参数c,并将其设置为一个元组.其中包含三个0~1
 # 之间的小数值,它们分别表示红色、绿色和蓝色分量.c=(0, 0, 0.8)创建一个由淡蓝色点组成的散点图.
 
 # 3.使用颜色映射
 plt.scatter(x_values, y_values, c=y_values, cmap=plt.cm.Blues,
-            edgecolors='none', s=40)  # 将参数c设置成了一个y值列表,并使用参数cmap告诉
+            edgecolor='none', s=40)  # 将参数c设置成了一个y值列表,并使用参数cmap告诉
 # pyplot使用那个颜色映射.这些代码将y值较小的点显示为浅蓝色,并将y值较大的点显示为深蓝色.
 
 # 设置图表标题并给坐标轴加上标签
