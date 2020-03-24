@@ -1,39 +1,45 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-try:
-    # Python 2.x 版本
-    from urllib2 import urlopen
-except ImportError:
-    # Python 3.x 版本
-    from urllib.request import urlopen
 import json
-import ssl
-from pprint import pprint
+import pygal
 
+# 将数据加载到一个列表中
+filename = 'btc_close_2017.json'
+with open(filename) as f:
+    btc_data = json.load(f)
+# 创建5个列表,分别存储日期和收盘价
+dates = []
+months = []
+weeks = []
+weekdays = []
+close = []
+# 打印每一天的信息
+for btc_dict in btc_data:
+    dates.append(btc_dict['date'])
+    months.append(int(btc_dict['month']))
+    weeks.append(int(btc_dict['week']))
+    weekdays.append(btc_dict['weekday'])
+    close.append(int(float(btc_dict['close'])))
+    # Python不能直接将包含小数点的字符串转换为整数
+    # 报错信息:
+    # ValueError: invalid literal for int() with base 10: '6928.6492'
+    # 解决方案:
+    # 首先用函数float()将字符串转换为小数,然后再用函数int()去掉小数部分(截尾取整),
+    # 返回整数部分.
+
+line_chart = pygal.Line(x_label_rotation=20, show_minor_x_labels=False)
+# x_label_rotation=20让x轴上的日期标签顺时针旋转20°,show_minor_x_labels=False则告诉
+# 图形不用显示所有的x轴标签.
+line_chart.title = '收盘价(￥)'
+line_chart.x_labels = dates
+N = 20  # x轴坐标每隔20天显示一次
+line_chart.x_labels_major = dates[::N]  # 配置x_labels_major属性,让x轴坐标每隔20天
+# 显示一次,这样x轴就不会显得非常拥挤.
+line_chart.add('收盘价', close)
+line_chart.render_to_file('收盘价折线图(￥).svg')
 # 报错信息:
-# urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]
-# certificate verify failed: unable to get local issuer certificate
-# (_ssl.c:1076)>
-
-# 解决方案一:
-# 全局取消证书验证(当项目对安全性问题不太重视时,推荐使用,可以全局取消证书的验证,简易方便）
-# ssl._create_default_https_context = ssl._create_unverified_context
-# 解决方案二:
-# 使用ssl创建未验证的上下文，在url中传入上下文参数(当项目整体非常重视安全问题时,推荐这种方式,
-# 可以局部取消证书验证）
-context = ssl._create_unverified_context()
-
-json_url = 'https://raw.githubusercontent.com/muxuezi/btc/master/' \
-           'btc_close_2017.json'
-response = urlopen(json_url, context=context)  # 将json_url网址传入urlopen函数,
-# Python就会向GitHub的服务器发送请求,GitHub的服务器响应请求后把btc_close_2017.json
-# 文件发送给Python.
-# 读取数据
-req = response.read()  # response.read()可以读取文件数据
-# 将数据写入文件
-with open('btc_close_2017_urllib.json', 'wb') as f:
-    f.write(req)  # btc_close_2017_urllib.json与btc_close_2017.json的内容是一样的.
-# 加载json格式
-file_urllib = json.loads(req)  # 将文件内容转换成Python能够处理的格式,与前面直接下载的
-# 文件内容一致.
-pprint(file_urllib)
+# Traceback (most recent call last):
+#   File "/Users/hanchen/PycharmProjects/BookExercise_02/Chapter_16/
+#   Page_312/btc_close_2017.py", line 37, in <module>
+#     line_chart.render_to_file('收盘价折线图(￥)'.svg)
+# AttributeError: 'str' object has no attribute 'svg'
+# 解决方案:
+# line_chart.render_to_file('收盘价折线图(￥).svg')
