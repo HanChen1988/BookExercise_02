@@ -8,13 +8,13 @@ from matplotlib import pyplot as plt
 # filename = 'sitka_weather_2014.csv'
 filename = 'death_valley_2014.csv'
 with open(filename) as f:  # 我们打开这个文件,并将结果文件对象存储在f中.
-    reader = csv.reader(f)  # 我们调用csv.reader(),并将前面存储的文件对象作为实参传递给
-    # 它,从而创建一个与该文件相关联的阅读器(reader)对象.
-    header_row = next(reader)  # 调用next()并将阅读器对象传递给它时,它将返回文件中的下一
-    # 行.在前面的代码中,我们只调用了next()一次,因此得到的是文件的第一行,其中包含文件头.
+    reader = csv.reader(f)  # 我们调用csv.reader(),并将前面存储的文件对象作为实参
+    # 传递给它,从而创建一个与该文件相关联的阅读器(reader)对象.
+    header_row = next(reader)  # 调用next()并将阅读器对象传递给它时,它将返回文件中的
+    # 下一行.在前面的代码中,我们只调用了next()一次,因此得到的是文件的第一行,其中包含文件头.
 
-    # for index, column_header in enumerate(header_row):  # 对列表调用了enumerate()
-    #     # 来获取每个元素的索引及其值.
+    # for index, column_header in enumerate(header_row):  # 对列表调用了
+    #     # enumerate()来获取每个元素的索引及其值.
     #     print(index, column_header)
 
     dates, highs, lows = [], [], []  # 我们创建了两个空列表,用于存储从文件中提取的日期、
@@ -23,11 +23,11 @@ with open(filename) as f:  # 我们打开这个文件,并将结果文件对象�
         # 每次都自动返回当前所处位置的下一行.由于我们已经读取了文件头行,这个循环从第二行开始——
         # 从这行开始包含的是实际数据.
         try:
-            current_date = datetime.strptime(row[0], '%Y-%m-%d')  # 导入模块datetime
-        # 中的datetime类,然后调用方法strptime(),并将包含所需日期的字符串作为第一个实参.
-        # 第二个实参告诉Python如何设置日期的格式.在这个示例中,'%Y-'让Python将字符串中第一个
-        # 连字符前面的部分视为四位的年份;'%m-'让Python将第二个连字符前面的部分视为表示月份
-        # 的数字;而'%d'让Python将字符串的最后一部分视为月份中的一天(1~31).
+            current_date = datetime.strptime(row[0], '%Y-%m-%d')  # 导入模块
+        # datetime中的datetime类,然后调用方法strptime(),并将包含所需日期的字符串作为
+        # 第一个实参.第二个实参告诉Python如何设置日期的格式.在这个示例中,'%Y-'让Python将
+        # 字符串中第一个连字符前面的部分视为四位的年份;'%m-'让Python将第二个连字符前面的
+        # 部分视为表示月份的数字;而'%d'让Python将字符串的最后一部分视为月份中的一天(1~31).
             high = int(row[1])  # 将表示气温的字符串转换成了数字
             low = int(row[3])
         except ValueError:
