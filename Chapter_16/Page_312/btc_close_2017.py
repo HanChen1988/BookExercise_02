@@ -80,6 +80,7 @@ def draw_line(x_data, y_data, title, y_legend):
     return line_chart
 
 
+# 3.收盘价月日均值(￥).svg
 # 绘制2017年1月到11月的月日均值
 idx_month = dates.index('2017-12-01')  # 通过dates查找2017-12-01的索引位置,确定
 # 月份和收盘价的取值范围.
@@ -87,6 +88,7 @@ line_chart_month = draw_line(months[:idx_month], close[:idx_month],
                              '收盘价月日均值(￥)', '月日均值')
 line_chart_month.render_to_file(line_chart_month.title+'.svg')
 
+# 4.收盘价周日均值(￥).svg
 # 绘制前49周(2017-01-02~2017-12-10)的周日均值
 idx_week = dates.index('2017-12-11')  # 通过dates查找2017-12-11的索引位置,确定
 # 周数和收盘价的取数范围.2017年1月1日是周日,归属为2016年第52周,因此取数时需要将第一天去掉.
@@ -94,6 +96,7 @@ line_chart_week = draw_line(weeks[1:idx_week], close[1:idx_week],
                             '收盘价周日均值(￥)', '周日均值')
 line_chart_week.render_to_file(line_chart_week.title+'.svg')
 
+# 5.收盘价星期均值(￥).svg
 # 绘制前49周(2017-01-02~2017-12-10)的星期均值
 idx_week = dates.index('2017-12-11')
 wd = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
